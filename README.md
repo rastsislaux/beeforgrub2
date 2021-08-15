@@ -1,6 +1,6 @@
 ## BEE (BLS Entries Editor) for Grub2
 Tool to edit BLS-specified boot loader entries for Grub2
-More info about specification: https://systemd.io/BOOT_LOADER_SPECIFICATION/
+More info about specification:<br>https://systemd.io/BOOT_LOADER_SPECIFICATION/
 
 ### How to use
 1. Run it from terminal using "sudo python beeforgrub2.py" or "sudo ./beeforgrub2" (if you have it as a binary)
