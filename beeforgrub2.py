@@ -61,7 +61,7 @@ class Menuentry():
         """exporting menuentry to file"""
         with open(path, 'w') as target_file:
             for key in self.params:
-                if(key in ['grub_arg', 'grub_class']):
+                if not (key in ['grub_arg', 'grub_class']):
                     target_file.write(f"{key} {self.params[key]}\n")
                 else:
                     for arg in self.params[key].split():
