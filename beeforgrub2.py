@@ -10,7 +10,7 @@ from functools import partial
 from shutil import copyfile
 from math import ceil
 APP_TITLE = "BEE for Grub2"
-APP_VERSION = "0.2"
+APP_VERSION = "v0.2.1-beta"
 APP_AUTHOR = "ungaf"
 APP_LICENSE = "GPL"
 PATH_TO_PY = os.path.dirname(os.path.abspath(__file__)) + '/'
