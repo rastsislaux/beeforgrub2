@@ -9,16 +9,17 @@ import os
 from functools import partial
 from shutil import copyfile
 from math import ceil
+from typing import Set
 APP_TITLE = "BEE for Grub2"
 APP_VERSION = "v0.2.1-beta"
 APP_AUTHOR = "ungaf"
-APP_LICENSE = "GPL"
+APP_LICENSE = "GPL v3"
 PATH_TO_PY = os.path.dirname(os.path.abspath(__file__)) + '/'
 HOME_DIR = os.path.expanduser("~")
 DATA_DIR = os.path.join(HOME_DIR, "beeforgrub2")
 def is_root():
+    """check if the user is root"""
     return os.getuid() == 0
-
 if is_root(): 
     try:
         with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
@@ -84,10 +85,13 @@ class App(tkinter.Tk):
         self.icon = tkinter.PhotoImage(file=f"{PATH_TO_PY}etc/bee.png")
         self.tk.call('wm', 'iconphoto', self._w, self.icon)
         menu = tkinter.Menu()
+        menu_file = tkinter.Menu(menu, tearoff=0)
+        menu_file.add_command(label=locale['settings'], command=self.open_settings)
         menu_look = tkinter.Menu(menu, tearoff=0)
         menu_look.add_command(label=locale['renew'], command=self.renew_entries)
         menu_about = tkinter.Menu(menu, tearoff=0)
         menu_about.add_command(label=locale['about'], command=self.open_about)
+        menu.add_cascade(label=locale['file'], menu=menu_file)
         menu.add_cascade(label=locale['look'], menu=menu_look)
         menu.add_cascade(label=locale['about'], menu=menu_about)
         self.config(menu=menu)
@@ -123,19 +127,52 @@ class App(tkinter.Tk):
                 self.entry_buttons[-1].pack()
     def open_editor(self, entry, is_new = False):
         """open entry editor"""
-        editor = Editor(self, entry, is_new)
-        editor.mainloop()
+        Editor(self, entry, is_new)
     def open_about(self):
         """open about window"""
-        about = About(self)
-        about.mainloop()
+        About(self)
+    def open_settings(self):
+        """open settings window"""
+        Settings(self)
+class Settings(tkinter.Toplevel):
+    """settings window"""
+    def __init__(self, parent):
+        """init func"""
+        super().__init__(parent)
+        self.tk.call('wm', 'iconphoto', self._w, parent.icon)
+        self.title(f"{APP_TITLE} > settings")
+        self.resizable(0,0)
+        self.geometry("500x140")
+        self.cfg_variables = {
+            "locale": tkinter.StringVar(),
+            "entries_path": tkinter.StringVar()
+        }
+        with open(os.path.join(DATA_DIR, 'config.json'), 'r') as config_file:
+            temp = json.loads(config_file.read())
+        for key in temp:
+            self.cfg_variables[key].set(temp[key])
+        for key in self.cfg_variables:
+            tkinter.Label(self, text=locale[key]).pack()
+            tkinter.Entry(self, textvariable=self.cfg_variables[key], width=98).pack()
+        tkinter.Button(self, text=locale['save'], command=self.save).pack(pady=10)
+        
+    def save(self):
+        config_dict = {}
+        for key in self.cfg_variables:
+            config_dict.update({
+                key: self.cfg_variables[key].get()
+            })
+        with open(os.path.join(DATA_DIR, 'config.json'), 'w') as config_file:
+            config_file.write(json.dumps(config_dict))
+        self.destroy()
+        tkinter.messagebox.showinfo(f"{APP_TITLE} > !", locale['restart_please'])
 class About(tkinter.Toplevel):
     """about window"""
     def __init__(self, parent):
         """init func"""
         super().__init__(parent)
         self.tk.call('wm', 'iconphoto', self._w, parent.icon)
-        self.title(F"{APP_TITLE} > about")
+        self.title(f"{APP_TITLE} > about")
         self.resizable(0,0)
         about_text = f"{APP_TITLE}\nVersion: {APP_VERSION}\nLicense: {APP_LICENSE}\n\
 Author: {APP_AUTHOR}\n\n\
