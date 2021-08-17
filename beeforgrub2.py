@@ -25,7 +25,7 @@ def is_root():
 
 if is_root(): 
     try:
-        with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
+        with open(os.path.join(DATA_DIR, "config.json"), "r", encoding="utf-8") as config_file:
             config = json.loads(config_file.read())
     except FileNotFoundError:
         if not os.path.exists(DATA_DIR):
@@ -35,12 +35,12 @@ if is_root():
             DATA_DIR,
             "config.json"
         ))
-        with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
+        with open(os.path.join(DATA_DIR, "config.json"), "r", encoding="utf-8") as config_file:
             config = json.loads(config_file.read())
 else:
-    with open(os.path.join(PATH_TO_PY, "etc/config.json"), "r") as config_file:
+    with open(os.path.join(PATH_TO_PY, "etc/config.json"), "r", encoding="utf-8") as config_file:
             config = json.loads(config_file.read())
-with open(PATH_TO_PY+f"locales/{config['locale']}.json", 'r') as locale_file:
+with open(PATH_TO_PY+f"locales/{config['locale']}.json", 'r', encoding="utf-8") as locale_file:
     locale = json.loads(locale_file.read())
 
 def l(key):
@@ -74,7 +74,7 @@ class Menuentry():
         return self.filename
     def export_to_file(self, path):
         """exporting menuentry to file"""
-        with open(path, 'w') as target_file:
+        with open(path, 'w', encoding="utf-8") as target_file:
             for key in self.params:
                 if not (key in ['grub_arg', 'grub_class']):
                     target_file.write(f"{key} {self.params[key]}\n")
@@ -156,7 +156,7 @@ class Settings(tkinter.Toplevel):
             "locale": tkinter.StringVar(),
             "entries_path": tkinter.StringVar()
         }
-        with open(os.path.join(DATA_DIR, 'config.json'), 'r') as config_file:
+        with open(os.path.join(DATA_DIR, 'config.json'), 'r', encoding="utf-8") as config_file:
             temp = json.loads(config_file.read())
         for key in temp:
             self.cfg_variables[key].set(temp[key])
@@ -171,7 +171,7 @@ class Settings(tkinter.Toplevel):
             config_dict.update({
                 key: self.cfg_variables[key].get()
             })
-        with open(os.path.join(DATA_DIR, 'config.json'), 'w') as config_file:
+        with open(os.path.join(DATA_DIR, 'config.json'), 'w', encoding="utf-8") as config_file:
             config_file.write(json.dumps(config_dict))
         self.destroy()
         tkinter.messagebox.showinfo(f"{APP_TITLE} > !", l('restart_please'))
@@ -292,7 +292,6 @@ def main():
                 ):
                     os.system(f"{com} python \"{os.path.join(PATH_TO_PY, 'beeforgrub2.py')}\"")
                 else:
-                    print(os.path.exists("beeforgrub2"))
                     os.system(f"{com} ./beeforgrub2")
             sys.exit()
                 
