@@ -9,6 +9,7 @@ import os
 from functools import partial
 from shutil import copyfile
 from math import ceil
+import sys
 
 APP_TITLE = "BEE for Grub2"
 APP_VERSION = "v0.3.2-beta"
@@ -27,7 +28,6 @@ if is_root():
         with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
             config = json.loads(config_file.read())
     except FileNotFoundError:
-        print("ye")
         if not os.path.exists(DATA_DIR):
             print(os.path.exists(DATA_DIR))
             os.makedirs(DATA_DIR)
@@ -38,7 +38,6 @@ if is_root():
         with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
             config = json.loads(config_file.read())
 else:
-    print("yeye")
     with open(os.path.join(PATH_TO_PY, "etc/config.json"), "r") as config_file:
             config = json.loads(config_file.read())
 with open(PATH_TO_PY+f"locales/{config['locale']}.json", 'r') as locale_file:
@@ -283,6 +282,20 @@ class Editor(tkinter.Toplevel):
 
 def main():
     """Main function"""
+    if os.getuid() != 0:
+        su = ['kdesu', 'gksu', 'sudo']
+        for com in su:
+            if os.path.exists(
+                os.path.join('/usr/bin', com)):
+                if os.path.exists(
+                    os.path.join('beeforgrub2.py')
+                ):
+                    os.system(f"{com} python \"{os.path.join(PATH_TO_PY, 'beeforgrub2.py')}\"")
+                else:
+                    print(os.path.exists("beeforgrub2"))
+                    os.system(f"{com} ./beeforgrub2")
+            sys.exit()
+                
     if os.getuid() != 0:
         root = tkinter.Tk()
         root.withdraw()
