@@ -11,7 +11,7 @@ from shutil import copyfile
 from math import ceil
 from typing import Set
 APP_TITLE = "BEE for Grub2"
-APP_VERSION = "v0.2.1-beta"
+APP_VERSION = "v0.3-beta"
 APP_AUTHOR = "ungaf"
 APP_LICENSE = "GPL v3"
 PATH_TO_PY = os.path.dirname(os.path.abspath(__file__)) + '/'
@@ -111,7 +111,7 @@ class App(tkinter.Tk):
         ) if (os.path.isfile(os.path.join(
             config['entries_path'], file
         )) and file.endswith(".conf"))]
-        self.geometry(f"800x{ceil(len(found_entries)*30+53)}")
+        self.geometry(f"800x{ceil(len(found_entries)*30+63)}")
         for entry in found_entries:
             with open(os.path.join(
                 config['entries_path'],
