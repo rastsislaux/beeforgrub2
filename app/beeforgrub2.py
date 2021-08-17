@@ -11,15 +11,17 @@ from shutil import copyfile
 from math import ceil
 
 APP_TITLE = "BEE for Grub2"
-APP_VERSION = "v0.3-beta"
+APP_VERSION = "v0.3.2-beta"
 APP_AUTHOR = "ungaf"
 APP_LICENSE = "GPL v3"
 PATH_TO_PY = os.path.dirname(os.path.abspath(__file__)) + '/'
 HOME_DIR = os.path.expanduser("~")
 DATA_DIR = os.path.join(HOME_DIR, "beeforgrub2")
+
 def is_root():
     """check if the user is root"""
     return os.getuid() == 0
+
 if is_root(): 
     try:
         with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
@@ -41,6 +43,12 @@ else:
             config = json.loads(config_file.read())
 with open(PATH_TO_PY+f"locales/{config['locale']}.json", 'r') as locale_file:
     locale = json.loads(locale_file.read())
+
+def l(key):
+    if key in locale:
+        return locale[key]
+    return f"${key}"
+
 # Menuentry class
 class Menuentry():
     """Menuentry class"""
@@ -74,6 +82,7 @@ class Menuentry():
                 else:
                     for arg in self.params[key].split():
                         target_file.write(f"{key} {arg}\n")
+
 # App windows
 class App(tkinter.Tk):
     """main window"""
@@ -86,18 +95,18 @@ class App(tkinter.Tk):
         self.tk.call('wm', 'iconphoto', self._w, self.icon)
         menu = tkinter.Menu()
         menu_file = tkinter.Menu(menu, tearoff=0)
-        menu_file.add_command(label=locale['settings'], command=self.open_settings)
+        menu_file.add_command(label=l('settings'), command=self.open_settings)
         menu_look = tkinter.Menu(menu, tearoff=0)
-        menu_look.add_command(label=locale['renew'], command=self.renew_entries)
+        menu_look.add_command(label=l('renew'), command=self.renew_entries)
         menu_about = tkinter.Menu(menu, tearoff=0)
-        menu_about.add_command(label=locale['about'], command=self.open_about)
-        menu.add_cascade(label=locale['file'], menu=menu_file)
-        menu.add_cascade(label=locale['look'], menu=menu_look)
-        menu.add_cascade(label=locale['about'], menu=menu_about)
+        menu_about.add_command(label=l('about'), command=self.open_about)
+        menu.add_cascade(label=l('file'), menu=menu_file)
+        menu.add_cascade(label=l('look'), menu=menu_look)
+        menu.add_cascade(label=l('about'), menu=menu_about)
         self.config(menu=menu)
         with open(f'{PATH_TO_PY}etc/default.conf', 'r') as default_config:
             tkinter.Button(
-                text=locale['new_entry'],
+                text=l('new_entry'),
                 command=partial(self.open_editor, Menuentry(default_config), True)).pack(pady=10)
         self.entry_buttons = []
         self.renew_entries()
@@ -134,6 +143,7 @@ class App(tkinter.Tk):
     def open_settings(self):
         """open settings window"""
         Settings(self)
+
 class Settings(tkinter.Toplevel):
     """settings window"""
     def __init__(self, parent):
@@ -152,9 +162,9 @@ class Settings(tkinter.Toplevel):
         for key in temp:
             self.cfg_variables[key].set(temp[key])
         for key in self.cfg_variables:
-            tkinter.Label(self, text=locale[key]).pack()
+            tkinter.Label(self, text=l(key)).pack()
             tkinter.Entry(self, textvariable=self.cfg_variables[key], width=98).pack()
-        tkinter.Button(self, text=locale['save'], command=self.save).pack(pady=10)
+        tkinter.Button(self, text=l('save'), command=self.save).pack(pady=10)
         
     def save(self):
         config_dict = {}
@@ -165,7 +175,8 @@ class Settings(tkinter.Toplevel):
         with open(os.path.join(DATA_DIR, 'config.json'), 'w') as config_file:
             config_file.write(json.dumps(config_dict))
         self.destroy()
-        tkinter.messagebox.showinfo(f"{APP_TITLE} > !", locale['restart_please'])
+        tkinter.messagebox.showinfo(f"{APP_TITLE} > !", l('restart_please'))
+
 class About(tkinter.Toplevel):
     """about window"""
     def __init__(self, parent):
@@ -215,21 +226,21 @@ class Editor(tkinter.Toplevel):
             "grub_class":tkinter.StringVar()
         }
         for key in new:
-            tkinter.Label(self, text=locale[key]).pack()
+            tkinter.Label(self, text=l(key)).pack()
             if key in entry.params:
                 new[key].set(entry.params[key])
             tkinter.Entry(self, textvariable=new[key], width=100).pack()
         control_buttons = tkinter.Frame(self)
-        save_button = tkinter.Button(control_buttons, text=locale['save'],
+        save_button = tkinter.Button(control_buttons, text=l('save'),
             command=partial(self.save, parent, new, entry))
         save_button.grid(
                 row=0, column=0
             )
-        tkinter.Button(control_buttons, text=locale['saveas'],
+        tkinter.Button(control_buttons, text=l('saveas'),
             command=partial(self.saveas, parent, new, entry)).grid(
                 row=0, column=1
             )
-        delete_button = tkinter.Button(control_buttons, text=locale['delete'],
+        delete_button = tkinter.Button(control_buttons, text=l('delete'),
             command=partial(self.delete, parent, entry))
         delete_button.grid(
             row=0, column=2
@@ -264,11 +275,12 @@ class Editor(tkinter.Toplevel):
         """delete entry"""
         if tkinter.messagebox.askokcancel(
             f"{APP_TITLE} > ?",
-            locale['delete_question']
+            l('delete_question')
         ):
             os.remove(entry.filename)
             parent.renew_entries()
             self.destroy()
+
 def main():
     """Main function"""
     if os.getuid() != 0:
@@ -276,9 +288,10 @@ def main():
         root.withdraw()
         tkinter.messagebox.showerror(
             title=f"{APP_TITLE} > Oops",
-            message=locale['needs_root'])
+            message=l('needs_root'))
     else:
         window = App()
         window.mainloop()
+
 if __name__ == "__main__":
     main()
