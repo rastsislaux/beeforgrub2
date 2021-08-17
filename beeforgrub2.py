@@ -16,21 +16,28 @@ APP_LICENSE = "GPL"
 PATH_TO_PY = os.path.dirname(os.path.abspath(__file__)) + '/'
 HOME_DIR = os.path.expanduser("~")
 DATA_DIR = os.path.join(HOME_DIR, "beeforgrub2")
+def is_root():
+    return os.getuid() == 0
 
-try:
-    with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
-        config = json.loads(config_file.read())
-except FileNotFoundError:
-    if not os.path.exists(DATA_DIR):
-        print(os.path.exists(DATA_DIR))
-        os.makedirs(DATA_DIR)
-    copyfile(PATH_TO_PY+"etc/config.json", os.path.join(
-        DATA_DIR,
-        "config.json"
-    ))
-    with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
-        config = json.loads(config_file.read())
-
+if is_root(): 
+    try:
+        with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
+            config = json.loads(config_file.read())
+    except FileNotFoundError:
+        print("ye")
+        if not os.path.exists(DATA_DIR):
+            print(os.path.exists(DATA_DIR))
+            os.makedirs(DATA_DIR)
+        copyfile(PATH_TO_PY+"etc/config.json", os.path.join(
+            DATA_DIR,
+            "config.json"
+        ))
+        with open(os.path.join(DATA_DIR, "config.json"), "r") as config_file:
+            config = json.loads(config_file.read())
+else:
+    print("yeye")
+    with open(os.path.join(PATH_TO_PY, "etc/config.json"), "r") as config_file:
+            config = json.loads(config_file.read())
 with open(PATH_TO_PY+f"locales/{config['locale']}.json", 'r') as locale_file:
     locale = json.loads(locale_file.read())
 # Menuentry class
