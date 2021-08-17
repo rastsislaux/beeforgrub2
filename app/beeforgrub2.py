@@ -9,7 +9,7 @@ import os
 from functools import partial
 from shutil import copyfile
 from math import ceil
-from typing import Set
+
 APP_TITLE = "BEE for Grub2"
 APP_VERSION = "v0.3-beta"
 APP_AUTHOR = "ungaf"
