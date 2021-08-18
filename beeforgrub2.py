@@ -13,6 +13,7 @@ from shutil import copyfile
 from math import ceil
 import sys
 
+# Constants
 APP_TITLE = "BEE for Grub2"
 APP_VERSION = "v0.3.4-beta"
 APP_AUTHOR = "ungaf"
@@ -22,9 +23,10 @@ HOME_DIR = os.path.expanduser("~")
 DATA_DIR = os.path.join(HOME_DIR, "beeforgrub2")
 
 def is_root():
-    """check if the user is root"""
+    """Checks if the user is root"""
     return os.getuid() == 0
 
+# Loading config and locale file
 if is_root(): 
     try:
         with open(os.path.join(DATA_DIR, "config.json"), "r", encoding="utf-8") as config_file:
@@ -49,6 +51,7 @@ try:
 except FileNotFoundError:
     locale = {"title":"NOT_FOUND", "dictionary":{}}
 
+# Function to return localisation from key
 def l(key):
     if key in locale['dictionary']:
         return locale['dictionary'][key]
@@ -321,12 +324,10 @@ def main():
         for com in su:
             if os.path.exists(
                 os.path.join('/usr/bin', com)):
-                if os.path.exists(
-                    os.path.join('beeforgrub2.py')
-                ):
-                    os.system(f"{com} python \"{os.path.join(PATH_TO_PY, 'beeforgrub2.py')}\"")
-                else:
-                    os.system(f"{com} ./beeforgrub2")
+                if os.path.exists(__file__):
+                    os.system(f"{com} python \"{__file__}\"")
+                else:   
+                    os.system(f"{com} \"{os.path.abspath(sys.argv[0])}\"")
             sys.exit()
                 
     if os.getuid() != 0:
