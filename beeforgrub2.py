@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """BLS Entry Editor for Grub2"""
-from genericpath import isfile
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
