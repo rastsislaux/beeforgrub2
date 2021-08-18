@@ -79,7 +79,7 @@ class Menuentry():
                 pass
     def __repr__(self) -> str:
         """repr func"""
-        return self.filename
+        return f"{self.params['title']} ({self.filename.split('/')[-1]})"
     def export_to_file(self, path):
         """exporting menuentry to file"""
         with open(path, 'w', encoding="utf-8") as target_file:
@@ -141,7 +141,7 @@ class App(tk.Tk):
                 new_entry = Menuentry(entry_file)
                 self.entry_buttons.append(tk.Button(
                     self,
-                    text=new_entry.filename,
+                    text=new_entry,
                     width=98,
                     command=partial(self.open_editor, new_entry)
                     ))
