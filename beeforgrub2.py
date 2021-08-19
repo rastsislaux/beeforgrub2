@@ -106,6 +106,7 @@ class App(tk.Tk):
         style.theme_use("breeze")
         menu = tk.Menu()
         menu_file = tk.Menu(menu, tearoff=0)
+        menu_file.add_command(label=l('open'), command=self.open_file)
         menu_file.add_command(label=l('settings'), command=self.open_settings)
         menu_look = tk.Menu(menu, tearoff=0)
         menu_look.add_command(label=l('renew'), command=self.renew_entries)
@@ -150,6 +151,10 @@ class App(tk.Tk):
                     command=partial(self.open_editor, new_entry)
                     ))
                 self.entry_buttons[-1].pack()
+    def open_file(self):
+        file = tkinter.filedialog.askopenfilename()
+        with open(file, 'r', encoding='utf-8') as opened_file:
+            self.open_editor(Menuentry(opened_file), False)
     def open_editor(self, entry, is_new = False):
         """open entry editor"""
         Editor(self, entry, is_new)
@@ -350,6 +355,8 @@ def main():
                     new_entry.filename = os.path.abspath(sys.argv[1])
                     Editor(window, new_entry, True)
                     print("ye")
+            except IndexError:
+                pass
             window.mainloop()
         except IndexError:
             window = App()
