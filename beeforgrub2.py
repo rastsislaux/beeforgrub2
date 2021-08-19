@@ -100,6 +100,10 @@ class App(tk.Tk):
         self.resizable(0, 1)
         self.icon = tk.PhotoImage(file=f"{PATH_TO_PY}etc/bee.png")
         self.tk.call('wm', 'iconphoto', self._w, self.icon)
+        self.tk.call('lappend', 'auto_path', os.path.join(PATH_TO_PY, 'breeze'))
+        self.tk.call('package', 'require', 'ttk::theme::breeze')
+        style = ttk.Style(self)
+        style.theme_use("breeze")
         menu = tk.Menu()
         menu_file = tk.Menu(menu, tearoff=0)
         menu_file.add_command(label=l('settings'), command=self.open_settings)
@@ -112,7 +116,7 @@ class App(tk.Tk):
         menu.add_cascade(label=l('about'), menu=menu_about)
         self.config(menu=menu)
         with open(f'{PATH_TO_PY}etc/default.conf', 'r') as default_config:
-            tk.Button(
+            ttk.Button(
                 text=l('new_entry'),
                 command=partial(self.open_editor, Menuentry(default_config), True)).pack(pady=10)
         self.entry_buttons = []
@@ -139,7 +143,7 @@ class App(tk.Tk):
                 entry
             ), 'r') as entry_file:
                 new_entry = Menuentry(entry_file)
-                self.entry_buttons.append(tk.Button(
+                self.entry_buttons.append(ttk.Button(
                     self,
                     text=new_entry,
                     width=98,
@@ -164,7 +168,7 @@ class Settings(tk.Toplevel):
         self.tk.call('wm', 'iconphoto', self._w, parent.icon)
         self.title(f"{APP_TITLE} > settings")
         self.resizable(0,0)
-        self.geometry("500x140")
+        self.geometry("500x160")
         self.cfg_variables = {
             "locale": tk.StringVar(),
             "entries_path": tk.StringVar()
@@ -174,7 +178,7 @@ class Settings(tk.Toplevel):
         for key in temp:
             self.cfg_variables[key].set(temp[key])
         for key in self.cfg_variables:
-            tk.Label(self, text=l(key)).pack()
+            ttk.Label(self, text=l(key)).pack()
             if key == 'locale':
                 found_locales = [locale[:-5] for locale in os.listdir(
                         os.path.join(PATH_TO_PY, 'locales')) if (os.path.isfile(
@@ -194,8 +198,8 @@ class Settings(tk.Toplevel):
                 self.language.set(locale["title"])
                 self.language.pack()
             else:
-                tk.Entry(self, textvariable=self.cfg_variables[key], width=98).pack()
-        tk.Button(self, text=l('save'), command=self.save).pack(pady=10)
+                ttk.Entry(self, textvariable=self.cfg_variables[key], width=98).pack()
+        ttk.Button(self, text=l('save'), command=self.save).pack(pady=10)
     def save(self):
         config_dict = {}
         for key in self.cfg_variables:
@@ -224,12 +228,11 @@ class About(tk.Toplevel):
 Author: {APP_AUTHOR}\n\n\
 This tool allows you to edit boot loader entries that are created using Boot Loader Specification by systemd team.\n\
 For more information visit: \nhttps://systemd.io/BOOT_LOADER_SPECIFICATION/"
-        tk.Label(
+        ttk.Label(
             self,
             text=about_text,
-            padx=10,
-            pady=10
-        ).pack()
+        ).pack(padx=10,
+            pady=10)
 class Editor(tk.Toplevel):
     """editor window"""
     def __init__(self, parent, entry, is_new):
@@ -237,9 +240,9 @@ class Editor(tk.Toplevel):
         super().__init__(parent)
         self.tk.call('wm', 'iconphoto', self._w, parent.icon)
         self.title(f"{APP_TITLE} > edit")
-        self.geometry("500x670")
+        self.geometry("500x770")
         self.resizable(0,0)
-        tk.Label(
+        ttk.Label(
             self,
             text=entry.filename.split('/')[-1]).pack(
             pady=10,
@@ -261,21 +264,21 @@ class Editor(tk.Toplevel):
             "grub_class":tk.StringVar()
         }
         for key in new:
-            tk.Label(self, text=l(key)).pack()
+            ttk.Label(self, text=l(key)).pack()
             if key in entry.params:
                 new[key].set(entry.params[key])
-            tk.Entry(self, textvariable=new[key], width=100).pack()
-        control_buttons = tk.Frame(self)
-        save_button = tk.Button(control_buttons, text=l('save'),
+            ttk.Entry(self, textvariable=new[key], width=100).pack()
+        control_buttons = ttk.Frame(self)
+        save_button = ttk.Button(control_buttons, text=l('save'),
             command=partial(self.save, parent, new, entry))
         save_button.grid(
                 row=0, column=0
             )
-        tk.Button(control_buttons, text=l('saveas'),
+        ttk.Button(control_buttons, text=l('saveas'),
             command=partial(self.saveas, parent, new, entry)).grid(
                 row=0, column=1
             )
-        delete_button = tk.Button(control_buttons, text=l('delete'),
+        delete_button = ttk.Button(control_buttons, text=l('delete'),
             command=partial(self.delete, parent, entry))
         delete_button.grid(
             row=0, column=2
@@ -308,7 +311,7 @@ class Editor(tk.Toplevel):
         self.destroy()
     def delete(self, parent, entry):
         """delete entry"""
-        if tk.messagebox.askokcancel(
+        if ttk.messagebox.askokcancel(
             f"{APP_TITLE} > ?",
             l('delete_question')
         ):
@@ -336,8 +339,21 @@ def main():
             title=f"{APP_TITLE} > Oops",
             message=l('needs_root'))
     else:
-        window = App()
-        window.mainloop()
+        try:
+            window = App()
+            try:
+                with open(sys.argv[1], 'r', encoding="utf-8") as given_file:
+                    Editor(window, Menuentry(given_file), False)
+            except FileNotFoundError:
+                with open(os.path.join(PATH_TO_PY, 'etc/default.conf'), 'r', encoding="utf-8") as given_file:
+                    new_entry = Menuentry(given_file)
+                    new_entry.filename = os.path.abspath(sys.argv[1])
+                    Editor(window, new_entry, True)
+                    print("ye")
+            window.mainloop()
+        except IndexError:
+            window = App()
+            window.mainloop()
 
 if __name__ == "__main__":
     main()
