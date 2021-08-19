@@ -32,6 +32,7 @@
         "restart_please":"Please, restart the application to apply new settings.",
         "entries_path_not_found":"Path to entries does not exist. Check your settings, please.",
         "open":"Open",
-        "browse":"Browse"
+        "browse":"Browse",
+        "no_linux_or_efi":"New entry doesn't have neither loader file (efi) nor Linux kernel file (linux). Saved entry will not be valid. Are you sure you want to continue?"
     }
 }

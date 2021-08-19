@@ -303,25 +303,36 @@ class Editor(tk.Toplevel):
     def save(self, parent, new, entry):
         """save entry"""
         temp = entry
-        for key in new:
-            if new[key].get() != "":
-                temp.params[key] = new[key].get()
-        temp.export_to_file(entry.filename)
-        parent.renew_entries()
-        self.destroy()
+        if not (new['efi'].get() or new['linux'].get()) and not tkinter.messagebox.askyesno(f"{APP_TITLE} > !", l('no_linux_or_efi')):
+            print('fail')
+        else:
+            for key in new:
+                if new[key].get() or temp.params.get(key):
+                    if new[key].get() != "":
+                        temp.params.update({key: new[key].get()})
+                    else:
+                        del temp.params[key]
+            temp.export_to_file(entry.filename)
+            parent.renew_entries()
+            self.destroy()
     def saveas(self, parent, new, entry):
         """save entry as"""
         temp = entry
-        for key in new:
-            if new[key].get() != "":
-                temp.params[key] = new[key].get()
-        new_path = tk.filedialog.asksaveasfilename(
-            initialdir=config['entries_path'],
-            defaultextension=".conf"
-        )
-        temp.export_to_file(new_path)
-        parent.renew_entries()
-        self.destroy()
+        if not (new['efi'].get() or new['linux'].get()) and not tkinter.messagebox.askyesno(f"{APP_TITLE} > !", l('no_linux_or_efi')):
+            print('fail')
+        else:
+            for key in new:
+                if new[key].get() or temp.params.get(key):
+                    if new[key].get() != "":
+                        temp.params.update({key: new[key].get()})
+                    else: del temp.params[key]
+            new_path = tk.filedialog.asksaveasfilename(
+                initialdir=config['entries_path'],
+                defaultextension=".conf"
+            )
+            temp.export_to_file(new_path)
+            parent.renew_entries()
+            self.destroy()
     def delete(self, parent, entry):
         """delete entry"""
         if tk.messagebox.askokcancel(
