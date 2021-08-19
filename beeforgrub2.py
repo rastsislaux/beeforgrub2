@@ -48,7 +48,7 @@ try:
     with open(PATH_TO_PY+f"locales/{config['locale']}.json", 'r', encoding="utf-8") as locale_file:
         locale = json.loads(locale_file.read())
 except FileNotFoundError:
-    locale = {"title":"NOT_FOUND", "dictionary":{}}
+    locale = {"title":"No language", "dictionary":{}}
 
 # Function to return localisation from key
 def l(key):
@@ -152,6 +152,7 @@ class App(tk.Tk):
                     ))
                 self.entry_buttons[-1].pack()
     def open_file(self):
+        """open file"""
         file = tkinter.filedialog.askopenfilename()
         with open(file, 'r', encoding='utf-8') as opened_file:
             self.open_editor(Menuentry(opened_file), False)
@@ -202,9 +203,16 @@ class Settings(tk.Toplevel):
                     width=98, state="readonly")
                 self.language.set(locale["title"])
                 self.language.pack()
+            elif key == 'entries_path':
+                entries_path_frame = ttk.Frame(self)
+                ttk.Entry(entries_path_frame, textvariable=self.cfg_variables[key], width=48).grid(row=0, column=0)
+                ttk.Button(entries_path_frame, text=l("browse"), command=self.ask_entries_path).grid(row=0, column=1)
+                entries_path_frame.pack()
             else:
                 ttk.Entry(self, textvariable=self.cfg_variables[key], width=98).pack()
         ttk.Button(self, text=l('save'), command=self.save).pack(pady=10)
+    def ask_entries_path(self):
+        self.cfg_variables['entries_path'].set(tkinter.filedialog.askdirectory())
     def save(self):
         config_dict = {}
         for key in self.cfg_variables:
@@ -316,7 +324,7 @@ class Editor(tk.Toplevel):
         self.destroy()
     def delete(self, parent, entry):
         """delete entry"""
-        if ttk.messagebox.askokcancel(
+        if tk.messagebox.askokcancel(
             f"{APP_TITLE} > ?",
             l('delete_question')
         ):

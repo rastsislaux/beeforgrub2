@@ -31,6 +31,7 @@
         "entries_path":"Path to entries:",
         "restart_please":"Please, restart the application to apply new settings.",
         "entries_path_not_found":"Path to entries does not exist. Check your settings, please.",
-        "open":"Open"
+        "open":"Open",
+        "browse":"Browse"
     }
 }
