@@ -304,7 +304,7 @@ class Editor(tk.Toplevel):
         """save entry"""
         temp = entry
         if not (new['efi'].get() or new['linux'].get()) and not tkinter.messagebox.askyesno(f"{APP_TITLE} > !", l('no_linux_or_efi')):
-            print('fail')
+            pass
         else:
             for key in new:
                 if new[key].get() or temp.params.get(key):
