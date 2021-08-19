@@ -14,7 +14,7 @@ import sys
 
 # Constants
 APP_TITLE = "BEE for Grub2"
-APP_VERSION = "v0.3.4-beta"
+APP_VERSION = "v0.3.5-beta"
 APP_AUTHOR = "ungaf"
 APP_LICENSE = "GPL v3"
 PATH_TO_PY = os.path.dirname(os.path.abspath(__file__)) + '/'
