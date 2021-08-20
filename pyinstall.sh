@@ -1,0 +1,1 @@
+pyinstaller --onefile --windowed --add-data "locales:locales" --add-data "etc:etc" --add-data "breeze:breeze" beeforgrub2.py

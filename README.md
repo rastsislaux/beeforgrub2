@@ -14,5 +14,4 @@ Default path to boot loader entry files is /boot/loader/entries<br>
 Default language is English (en_EN) but Russian (ru_RU) is also available.
 
 ### Compile it yourself using pyinstaller
-cd {directory}<br>
-pyinstaller --onefile --windowed --add-data "locales:locales" --add-data "etc:etc" --add-data "breeze:breeze" beeforgrub2.py
+sh pyinstall.sh
