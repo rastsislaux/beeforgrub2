@@ -354,7 +354,7 @@ def main():
                     os.system(f"{com} python \"{__file__}\"")
                 else:   
                     os.system(f"{com} \"{os.path.abspath(sys.argv[0])}\"")
-            sys.exit()
+                sys.exit()
                 
     if os.getuid() != 0:
         root = tk.Tk()
