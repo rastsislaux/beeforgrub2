@@ -1,3 +1,5 @@
+### Hey! This is an old version of an app which will not be updated. It was rewritten using C++ and Qt, check main branch for new version!
+
 ## BEE (BLS Entries Editor) for Grub2
 Tool to edit BLS-specified boot loader entries for Grub2
 More info about specification:<br>https://systemd.io/BOOT_LOADER_SPECIFICATION/
