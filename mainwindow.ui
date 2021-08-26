@@ -82,22 +82,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>entriesList</sender>
-   <signal>itemDoubleClicked(QListWidgetItem*)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>open_item(QListWidgetItem*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>548</x>
-     <y>367</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>918</x>
-     <y>397</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>menubar</sender>
    <signal>triggered(QAction*)</signal>
    <receiver>MainWindow</receiver>
@@ -110,6 +94,22 @@
     <hint type="destinationlabel">
      <x>1217</x>
      <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>entriesList</sender>
+   <signal>itemDoubleClicked(QListWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_item(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>548</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>918</x>
+     <y>397</y>
     </hint>
    </hints>
   </connection>
