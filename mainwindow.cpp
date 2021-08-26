@@ -12,8 +12,6 @@
 #include <sys/types.h>
 #include <pwd.h>
 
-#include <iostream>
-
 using namespace std;
 namespace fs = std::filesystem;
 
